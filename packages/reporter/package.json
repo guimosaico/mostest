@@ -1,0 +1,34 @@
+{
+  "name": "@mostest/reporter",
+  "version": "0.1.0",
+  "description": "Intelligent test reporter for Vitest with AI-powered failure analysis",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --external vitest",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --external vitest --watch"
+  },
+  "keywords": ["vitest", "reporter", "testing", "ai", "debugging"],
+  "author": "Gui Kunzler",
+  "license": "MIT",
+  "dependencies": {
+    "@mostest/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vitest": "^2.0.0 || ^3.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^3.0.7"
+  }
+}

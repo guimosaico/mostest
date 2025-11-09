@@ -1,0 +1,23 @@
+{
+  "name": "mostest",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AI-powered intelligent test reporter for Vitest and Jest",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "tsup": "^8.0.0",
+    "prettier": "^3.3.0"
+  },
+  "keywords": ["vitest", "testing", "reporter", "ai", "debugging"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guimosaico/mostest.git"
+  },
+  "author": "Gui Kunzler",
+  "license": "MIT"
+}
