@@ -42,18 +42,32 @@ var MostestReporter = class {
       }
     }
   }
-  onTaskUpdate(packs) {
-    packs.forEach((pack) => {
-      const task = pack.result;
-      if (task?.state === "fail") {
-        const errors = task.errors || [];
-        errors.forEach((error) => {
-          const analysis = this.analyzeError(error, pack);
-          this.printAnalysis(analysis, pack);
-        });
-      }
-    });
+  // Modern Vitest 3.x hook - preferred method
+  onTestCaseResult(testCase) {
+    const result = testCase.result();
+    if (result.state === "failed") {
+      const errors = result.errors || [];
+      errors.forEach((error) => {
+        const analysis = this.analyzeError(error, testCase);
+        this.printAnalysis(analysis, testCase);
+      });
+    }
   }
+  // Legacy hook for Vitest 2.x (commented out to avoid duplicates in Vitest 3.x)
+  // onTaskUpdate(packs: any[], events?: any[]) {
+  //   // TaskResultPack is a tuple: [id: string, result: TaskResult | undefined, meta: TaskMeta]
+  //   packs.forEach((pack) => {
+  //     const [taskId, result, meta] = pack;
+  //
+  //     if (result?.state === 'fail') {
+  //       const errors = result.errors || [];
+  //       errors.forEach((error: any) => {
+  //         const analysis = this.analyzeError(error, { id: taskId, result, meta });
+  //         this.printAnalysis(analysis, { id: taskId, result, meta });
+  //       });
+  //     }
+  //   });
+  // }
   analyzeError(error, task) {
     const errorMessage = error.message || String(error);
     const errorType = (0, import_core.classifyError)(errorMessage);
@@ -101,10 +115,11 @@ var MostestReporter = class {
   printAnalysis(analysis, task) {
     const { verbosity } = this.config;
     if (verbosity === "silent") return;
+    const testName = task.fullName || task.name || task.id || "Unknown test";
     console.log("\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501");
     console.log("\u{1F50D} MOSTEST FAILURE ANALYSIS");
     console.log("\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n");
-    console.log(`Test: ${task.name}`);
+    console.log(`Test: ${testName}`);
     console.log(`Type: ${analysis.context.errorType}
 `);
     console.log("WHY IT FAILED:");

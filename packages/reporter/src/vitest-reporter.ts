@@ -32,18 +32,34 @@ export class MostestReporter implements Reporter {
     }
   }
 
-  onTaskUpdate(packs: any[]) {
-    packs.forEach((pack) => {
-      const task = pack.result;
-      if (task?.state === 'fail') {
-        const errors = task.errors || [];
-        errors.forEach((error: any) => {
-          const analysis = this.analyzeError(error, pack);
-          this.printAnalysis(analysis, pack);
-        });
-      }
-    });
+  // Modern Vitest 3.x hook - preferred method
+  onTestCaseResult(testCase: any) {
+    const result = testCase.result();
+
+    if (result.state === 'failed') {
+      const errors = result.errors || [];
+      errors.forEach((error: any) => {
+        const analysis = this.analyzeError(error, testCase);
+        this.printAnalysis(analysis, testCase);
+      });
+    }
   }
+
+  // Legacy hook for Vitest 2.x (commented out to avoid duplicates in Vitest 3.x)
+  // onTaskUpdate(packs: any[], events?: any[]) {
+  //   // TaskResultPack is a tuple: [id: string, result: TaskResult | undefined, meta: TaskMeta]
+  //   packs.forEach((pack) => {
+  //     const [taskId, result, meta] = pack;
+  //
+  //     if (result?.state === 'fail') {
+  //       const errors = result.errors || [];
+  //       errors.forEach((error: any) => {
+  //         const analysis = this.analyzeError(error, { id: taskId, result, meta });
+  //         this.printAnalysis(analysis, { id: taskId, result, meta });
+  //       });
+  //     }
+  //   });
+  // }
 
   private analyzeError(error: any, task: any): ErrorAnalysis {
     const errorMessage = error.message || String(error);
@@ -114,11 +130,14 @@ export class MostestReporter implements Reporter {
     const { verbosity } = this.config;
     if (verbosity === 'silent') return;
 
+    // Extract test name from either new TestCase or old task structure
+    const testName = task.fullName || task.name || task.id || 'Unknown test';
+
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('🔍 MOSTEST FAILURE ANALYSIS');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-    console.log(`Test: ${task.name}`);
+    console.log(`Test: ${testName}`);
     console.log(`Type: ${analysis.context.errorType}\n`);
 
     console.log('WHY IT FAILED:');

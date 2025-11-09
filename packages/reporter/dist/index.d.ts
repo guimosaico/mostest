@@ -11,7 +11,7 @@ declare class MostestReporter implements Reporter {
     private config;
     constructor(config?: ReporterConfig);
     onInit(): void;
-    onTaskUpdate(packs: any[]): void;
+    onTestCaseResult(testCase: any): void;
     private analyzeError;
     private explainWhy;
     private captureWhat;

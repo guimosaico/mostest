@@ -19,8 +19,16 @@ npm install -D @mostest/reporter
 
 ## Quick Start
 
-Add to your `vitest.config.ts`:
+**Step 1:** Install the reporter
+```bash
+# From npm (coming soon)
+npm install -D @mostest/reporter
 
+# Or locally for development/testing
+npm install -D /path/to/mostest/packages/reporter
+```
+
+**Step 2:** Configure in `vitest.config.mts` (or `.ts`)
 ```typescript
 import { defineConfig } from 'vitest/config';
 import { MostestReporter } from '@mostest/reporter';
@@ -29,13 +37,18 @@ export default defineConfig({
   test: {
     reporters: [
       'default',
-      new MostestReporter(),
+      new MostestReporter({ verbosity: 'verbose' }),
     ],
   },
 });
 ```
 
-Run your tests and see intelligent analysis:
+**Step 3:** Run your tests
+```bash
+npx vitest run
+```
+
+You'll see intelligent analysis for every failure:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
